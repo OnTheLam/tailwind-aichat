@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MessageCircle, Minimize2, Paperclip, RotateCcw } from 'lucide-react';
 import './App.css';
@@ -21,6 +22,24 @@ const ModelSelector = ({ models, selectedModel, onModelChange }) => (
   </select>
 );
 
+ModelSelector.propTypes = {
+  models: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  selectedModel: PropTypes.string.isRequired,
+  onModelChange: PropTypes.func.isRequired,
+};
+
+const initialMessage = {
+    id: 'initial-message',
+    content: "Hi!👋 I'm DVA, Duncan's Virtual Assistant. He built me from scratch!\n\nAsk me anything!",
+    type: 'text',
+    isUser: false
+  };
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -29,18 +48,11 @@ function App() {
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const initialMessage = {
-    id: 'initial-message',
-    content: "Hi!👋 I'm DVA, Duncan's Virtual Assistant. He built me from scratch!\n\nAsk me anything!",
-    type: 'text',
-    isUser: false
-  };
-
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([initialMessage]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   const models = [
     { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'openai' },
@@ -147,7 +159,7 @@ function App() {
       <div className={`fixed bottom-0 right-0 md:right-10 w-full md:w-96 h-full md:h-[600px] bg-white rounded-t-xl shadow-2xl transition-all duration-300 ease-in-out z-40 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
         <div className="flex flex-col h-full">
           <div className="bg-primary text-white p-4 rounded-t-xl flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Duncan's Virtual Assistant</h2>
+            <h2 className="text-xl font-semibold">Duncan&apos;s Virtual Assistant</h2>
             <div className="flex space-x-2">
               <button 
                 onClick={restartChat}
@@ -204,7 +216,7 @@ function App() {
             className='flex-grow p-2 border border-secondary rounded-full focus:outline-none focus:ring-2 focus:ring-secondary'
             aria-label='Type your message'
           />
-          {/* <label htmlFor="file-upload" className="p-2 bg-white text-primary rounded-full cursor-pointer hover:bg-opacity-80 transition-colors duration-200">
+          <label htmlFor="file-upload" className="p-2 bg-white text-primary rounded-full cursor-pointer hover:bg-opacity-80 transition-colors duration-200">
             <Paperclip size={18} />
           </label>
           <input
@@ -213,7 +225,7 @@ function App() {
             onChange={handleFileUpload}
             accept="image/*,audio/*,.txt,.pdf,.doc,.docx"
             className='hidden'
-          /> */}
+          />
           <button 
             type="submit" 
             disabled={isLoading}
